@@ -1,48 +1,54 @@
-.classification-handlers form {
+.classification-handlers {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  padding: 0 15px;
 }
 
-.classification-handlers form label {
-  color: #3d495c;
-  display: flex;
-  flex-direction: column;
-  font-family: Verdana , Tahoma , sans-serif;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 150%;
+:root {
+  --primary-color: rgb(3, 27, 49);
+  --secondary-color: rgb(77 148 213);;
+  --text-color: #212529;
+  --background-color: #f8f9fa;
 }
 
-.classification-handlers form label select {
-  background: white;
-  border: none;
-  border-bottom: 1px solid #3d495c;
-  color: #c5c9ce;
-  cursor: pointer;
-  font-family: Verdana , Tahoma , sans-serif;
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.3s;
+}
+
+button, select {
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
   font-size: 14px;
-  font-style: normal;
-  height: 40px;
-  width: 288px;
-}
-
-.classification-handlers form button {
-  align-self: flex-end;
-  background: #003be5;
-  border: 1px solid #003be5;
-  border-radius: 8px;
-  color: white;
   cursor: pointer;
-  flex-grow: 0;
-  font-family: Verdana , Tahoma , sans-serif;
-  font-size: 16px;
-  font-style: normal;
-  height: 40px;
-  line-height: 150%;
-  margin: 0 20px;
-  width: 164px;
 }
 
-.classification-handlers form button:hover {
-  background: #002799;
+button {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:hover, select:hover {
+  background-color: darken(var(--primary-color), 10%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+select {
+  background-color: white;
+  color: var(--text-color);
+}
+
+button:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  transform: scale(1.03);
 }

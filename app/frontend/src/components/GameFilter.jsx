@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
+  // Estado local para gerenciar a seleção atual
+  const [selectedFilter, setSelectedFilter] = useState(currentFilter);
+
+  // Atualiza o estado local com a seleção do usuário
+  const handleFilterChange = (event) => {
+    setSelectedFilter(event.target.value);
+  };
+
+  // Atualiza o filtro externo quando o botão é clicado
   const handleCurrentFilter = () => {
-    const selectedFilter = document.getElementById('game-filter').value;
     setCurrentFilter(selectedFilter);
   };
 
@@ -13,7 +21,8 @@ const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
         Partidas:
         <select
           id="game-filter"
-          defaultValue={ currentFilter }
+          value={selectedFilter}
+          onChange={handleFilterChange}
           data-testid="matches__option_show_finish_matches"
         >
           <option>Todos os Jogos</option>
@@ -24,7 +33,7 @@ const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
       <button
         data-testid="matches__search_match_btn"
         type="button"
-        onClick={ () => handleCurrentFilter() }
+        onClick={handleCurrentFilter}
       >
         Buscar
       </button>
@@ -32,9 +41,9 @@ const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
   );
 };
 
-GamerFilter.propTypes = ({
-  currentFilter: PropTypes.string,
-  setCurrentFilter: PropTypes.func,
-}).isRequired;
+GamerFilter.propTypes = {
+  currentFilter: PropTypes.string.isRequired,
+  setCurrentFilter: PropTypes.func.isRequired,
+};
 
 export default GamerFilter;

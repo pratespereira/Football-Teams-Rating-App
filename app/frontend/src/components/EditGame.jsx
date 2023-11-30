@@ -16,6 +16,18 @@ const EditGame = ({
 }) => {
   const [currentHomeTeamGoals, setHomeTeamGoals] = useState(homeTeamGoals);
   const [currentAwayTeamGoals, setAwayTeamGoals] = useState(awayTeamGoals);
+
+  const handleUpdateMatch = () => {
+    updateMatch(idMatch, {
+      homeTeamGoals: currentHomeTeamGoals,
+      awayTeamGoals: currentAwayTeamGoals,
+    });
+  };
+
+  const handleFinishMatch = () => {
+    finishMatch(idMatch);
+  };
+
   return (
     <section className="match-settings-section">
       <form className="match-settings-form">
@@ -54,23 +66,17 @@ const EditGame = ({
         <div className="match-settings-form-buttons">
           <button
             data-testid="insertion_matches__edit_match_btn"
-            onClick={ () => updateMatch(idMatch,
-              {
-                homeTeamGoals: currentHomeTeamGoals,
-                awayTeamGoals: currentAwayTeamGoals,
-              }) }
+            onClick={handleUpdateMatch}
             type="button"
           >
             Editar
-
           </button>
           <button
             data-testid="insertion_matches__finish_match_btn"
-            onClick={ () => finishMatch(idMatch) }
+            onClick={handleFinishMatch}
             type="button"
           >
             Finalizar
-
           </button>
         </div>
       </form>
@@ -78,15 +84,15 @@ const EditGame = ({
   );
 };
 
-EditGame.propTypes = ({
-  homeTeam: PropTypes.any,
-  awayTeam: PropTypes.any,
-  homeTeamGoals: PropTypes.any,
-  awayTeamGoals: PropTypes.any,
-  idMatch: PropTypes.any,
-  getTeam: PropTypes.any,
-  finishMatc: PropTypes.any,
-  updateMatch: PropTypes.any,
-}).isRequired;
+EditGame.propTypes = {
+  homeTeam: PropTypes.object.isRequired, // Substitua 'object' pelo tipo específico se necessário
+  awayTeam: PropTypes.object.isRequired,
+  homeTeamGoals: PropTypes.number.isRequired,
+  awayTeamGoals: PropTypes.number.isRequired,
+  idMatch: PropTypes.number.isRequired,
+  getTeam: PropTypes.func.isRequired,
+  finishMatch: PropTypes.func.isRequired,
+  updateMatch: PropTypes.func.isRequired,
+};
 
 export default EditGame;

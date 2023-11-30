@@ -43,7 +43,6 @@ export default class MatchesService {
       homeTeamGoals,
       awayTeamGoals,
       inProgress: true });
-    console.log(newMatch.dataValues);
     return { type: null, message: newMatch.dataValues as ISimpleMatchInProgess };
   }
 

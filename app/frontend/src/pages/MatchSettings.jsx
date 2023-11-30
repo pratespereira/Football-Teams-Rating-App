@@ -35,19 +35,17 @@ const MatchSettings = () => {
 
   useEffect(() => {
     const endpoint = '/teams';
-
     const token = localStorage.getItem('token') || '';
-    if (token !== '') {
+    if (token !== '' && !teams.length) {
       setToken(token);
-    }
-    if (!teams.length) {
       requestData(endpoint)
         .then((response) => {
           setTeams(response);
         })
         .catch((error) => console.log(error));
     }
-  });
+  }, [teams]); // Adicionando teams como dependência
+  
 
   const getTeam = (team, homeOrAway) => {
     const { id } = teams.find(({ teamName }) => teamName === team);

@@ -38,7 +38,7 @@ export default class UserService {
 
     const token = tokenCreate(userX);
     return { type: null, message: token };
-  }
+  }  
 
   static async getRole(token: string) {
     const { type, message } = checkToken(token);

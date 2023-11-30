@@ -10,6 +10,7 @@ const Header = ({
   SecondNavegationLink,
   logged,
   setLogin,
+  navigateToMatchSettings // Nova propriedade
 }) => {
   const navigate = useNavigate();
 
@@ -28,16 +29,18 @@ const Header = ({
       <h1 data-testid="header__title">{ page }</h1>
       <div className="buttons-content">
         <FirstNavigationLink />
-        {
-          (logged)
-            ? (
-              <button type="button" onClick={ () => logoff() }>
-                Sair
-                <img src={ exitToAppImg } alt="Sair do aplicativo" />
-              </button>
-            )
-            : <SecondNavegationLink />
-        }
+        {logged && (
+          <>
+            <button type="button" onClick={navigateToMatchSettings}>
+              Criar Partida
+            </button>
+            <button type="button" onClick={logoff}>
+              Sair
+              <img src={ exitToAppImg } alt="Sair do aplicativo" />
+            </button>
+          </>
+        )}
+        {!logged && <SecondNavegationLink />}
       </div>
     </header>
   );
@@ -49,12 +52,14 @@ Header.propTypes = {
   SecondNavegationLink: PropTypes.elementType,
   logged: PropTypes.bool,
   setLogin: PropTypes.func,
+  navigateToMatchSettings: PropTypes.func // Nova propriedade
 };
 
 Header.defaultProps = {
   SecondNavegationLink: null,
   logged: undefined,
   setLogin: undefined,
+  navigateToMatchSettings: undefined // Valor padrão
 };
 
 export default Header;

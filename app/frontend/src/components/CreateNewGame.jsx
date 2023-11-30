@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import TeamOption from './TeamOption';
 import Scoreboard from './Scoreboard';
 
+const NOT_CREATED = 'not-created';
+const IN_PROGRESS = 'in-progress';
+
 const CreateNewGame = ({
   teams,
   setTeams,
@@ -15,9 +18,20 @@ const CreateNewGame = ({
   createMatch,
   finishMatch,
 }) => {
-  const notCreated = 'not-created';
-  const [inProgress, setInProgress] = useState(notCreated);
-  const [createdMatch, setCreatedMatch] = useState(notCreated);
+  const [inProgress, setInProgress] = useState(NOT_CREATED);
+  const [createdMatch, setCreatedMatch] = useState(null);
+
+  const handleSaveMatch = async () => {
+    const body = await createMatch();
+    setCreatedMatch(body);
+    setInProgress(IN_PROGRESS);
+  };
+
+  const handleFinishMatch = () => {
+    if (createdMatch && createdMatch.id) {
+      finishMatch(createdMatch.id);
+    }
+  };
 
   return (
     <section className="match-settings-section">
@@ -25,16 +39,16 @@ const CreateNewGame = ({
         <div className="match-settings-form-options">
           <TeamOption
             testId="insertion_matches__select_home_team"
-            teams={ teams }
-            setTeams={ setTeams }
+            teams={teams}
+            setTeams={setTeams}
             homeTeam
-            getTeam={ getTeam }
+            getTeam={getTeam}
           />
           <Scoreboard
             testId="insertion_matches__select_quantity_goals_home_team"
             homeTeam
-            score={ homeTeamScoreboard }
-            setScore={ setHomeTeamScoreboard }
+            score={homeTeamScoreboard}
+            setScore={setHomeTeamScoreboard}
           />
           <div className="match-settings-form-versus">
             <span />
@@ -42,40 +56,34 @@ const CreateNewGame = ({
           </div>
           <Scoreboard
             testId="insertion_matches__select_quantity_goals_away_team"
-            homeTeam={ false }
-            score={ awayTeamScoreboard }
-            setScore={ setAwayTeamScoreboard }
+            homeTeam={false}
+            score={awayTeamScoreboard}
+            setScore={setAwayTeamScoreboard}
           />
           <TeamOption
             testId="insertion_matches__select_away_team"
-            teams={ teams }
-            setTeams={ setTeams }
-            homeTeam={ false }
-            getTeam={ getTeam }
+            teams={teams}
+            setTeams={setTeams}
+            homeTeam={false}
+            getTeam={getTeam}
           />
         </div>
         <div className="match-settings-form-buttons">
           <button
             data-testid="insertion_matches__save_match_btn"
-            onClick={ async () => {
-              const body = await createMatch();
-              setCreatedMatch(body);
-              setInProgress('In-Progress');
-            } }
+            onClick={handleSaveMatch}
             type="button"
-            disabled={ (inProgress !== notCreated) }
+            disabled={inProgress !== NOT_CREATED}
           >
             Salvar Partida
-
           </button>
           <button
             data-testid="insertion_matches__finish_match_btn"
-            onClick={ () => { finishMatch(createdMatch.id); } }
+            onClick={handleFinishMatch}
             type="button"
-            disabled={ (inProgress === notCreated) }
+            disabled={inProgress === NOT_CREATED}
           >
             Finalizar Partida
-
           </button>
         </div>
       </form>
@@ -83,14 +91,16 @@ const CreateNewGame = ({
   );
 };
 
-CreateNewGame.propTypes = ({
-  teams: PropTypes.arrayOf(PropTypes.object),
-  setTeams: PropTypes.func,
-  getTeam: PropTypes.func,
-  homeTeamScoreboard: PropTypes.string,
-  setHomeTeamScoreboard: PropTypes.func,
-  awayTeamScoreboard: PropTypes.string,
-  setAwayTeamScoreboard: PropTypes.func,
-}).isRequired;
+CreateNewGame.propTypes = {
+  teams: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setTeams: PropTypes.func.isRequired,
+  getTeam: PropTypes.func.isRequired,
+  homeTeamScoreboard: PropTypes.number.isRequired,
+  setHomeTeamScoreboard: PropTypes.func.isRequired,
+  awayTeamScoreboard: PropTypes.number.isRequired,
+  setAwayTeamScoreboard: PropTypes.func.isRequired,
+  createMatch: PropTypes.func.isRequired,
+  finishMatch: PropTypes.func.isRequired,
+};
 
 export default CreateNewGame;

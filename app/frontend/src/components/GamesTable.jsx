@@ -5,41 +5,83 @@ import { requestData } from '../services/requests';
 import Loading from './Loading';
 import { check, editIcon } from '../images';
 
+const GameRow = React.memo(({ game, isAdm, onNavigate }) => {
+  const { id, homeTeam, homeTeamGoals, awayTeam, awayTeamGoals, inProgress } = game;
+
+  return (
+    <tr key={id}>
+      <td className="games-table-tbody-home-team" data-testid={`matches__home_team_${id}`}>
+        {homeTeam.teamName}
+      </td>
+      <td className="games-table-tbody-home-team-goals" data-testid={`matches__home_team_goals_${id}`}>
+        {homeTeamGoals}
+      </td>
+      <td className="games-table-tbody-versus"></td>
+      <td className="games-table-tbody-away-team-goals" data-testid={`matches__away_team_goals_${id}`}>
+        {awayTeamGoals}
+      </td>
+      <td className="games-table-tbody-away-team" data-testid={`matches__away_team_${id}`}>
+        {awayTeam.teamName}
+      </td>
+      <td className="games-table-tbody-empty-space"></td>
+      <td className="games-table-tbody-status">
+        <div>
+          {
+            inProgress ? (
+              <p className="game-status in-progress" data-testid={`matches__match_status_${id}`}>
+                Em andamento
+              </p>
+            ) : (
+              <p className="game-status finished-game" data-testid={`matches__match_status_${id}`}>
+                Finalizado
+              </p>
+            )
+          }
+        </div>
+        {
+          isAdm && (
+            <button
+              type="button"
+              data-testid={`matches__match_status_btn_${id}`}
+              disabled={!inProgress}
+              onClick={() => onNavigate(game)}
+            >
+              {inProgress ? <img src={editIcon} alt="Jogo em andamento" /> : <img src={check} alt="Jogo finalizado" />}
+            </button>
+          )
+        }
+      </td>
+    </tr>
+  );
+});
+
 const GamesTable = ({ currentFilter, isAdm }) => {
   const [games, setGames] = useState([]);
-
   const navigate = useNavigate();
 
-  const getGames = (endpoint) => requestData(endpoint)
-    .then((response) => setGames(response))
-    .catch((error) => console.log(error));
+  const getGames = async (endpoint) => {
+    try {
+      const response = await requestData(endpoint);
+      setGames(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const endpoint = '/matches';
+    const filterEndpoint = `${endpoint}?inProgress=${currentFilter === 'Em andamento'}`;
 
-    switch (currentFilter) {
-    case 'Em andamento':
-      getGames(`${endpoint}?inProgress=true`);
-      break;
-    case 'Finalizado':
-      getGames(`${endpoint}?inProgress=false`);
-      break;
-    default:
-      getGames(endpoint);
-      break;
-    }
+    getGames(currentFilter !== 'Todos' ? filterEndpoint : endpoint);
   }, [currentFilter]);
 
-  useEffect(() => {
-    const endpoint = '/matches';
-
-    if (!games.length) {
-      getGames(endpoint);
-    }
-  }, [games]);
+  const handleNavigate = (game) => {
+    navigate('/matches/settings', { state: game });
+    localStorage.setItem('game', 'editar');
+  };
 
   if (!games.length) {
-    return (<Loading />);
+    return <Loading />;
   }
 
   return (
@@ -56,101 +98,9 @@ const GamesTable = ({ currentFilter, isAdm }) => {
         </tr>
       </thead>
       <tbody>
-        {
-          games
-            .sort((a, b) => b.inProgress - a.inProgress)
-            .map(({
-              id,
-              homeTeam,
-              homeTeamGoals,
-              awayTeam,
-              awayTeamGoals,
-              inProgress,
-            }) => (
-              <tr key={ id }>
-                <td
-                  className="games-table-tbody-home-team"
-                  data-testid={ `matches__home_team_${id}` }
-                >
-                  { homeTeam.teamName }
-                </td>
-                <td
-                  className="games-table-tbody-home-team-goals"
-                  data-testid={ `matches__home_team_goals_${id}` }
-                >
-                  { homeTeamGoals }
-                </td>
-                <td className="games-table-tbody-versus">X</td>
-                <td
-                  className="games-table-tbody-away-team-goals"
-                  data-testid={ `matches__away_team_goals_${id}` }
-                >
-                  { awayTeamGoals }
-                </td>
-                <td
-                  className="games-table-tbody-away-team"
-                  data-testid={ `matches__away_team_${id}` }
-                >
-                  { awayTeam.teamName }
-                </td>
-                <td className="games-table-tbody-empty-space">{ ' ' }</td>
-                <td className="games-table-tbody-status">
-                  <div>
-                    {
-                      (inProgress)
-                        ? (
-                          <p
-                            className="game-status in-progress"
-                            data-testid={ `matches__match_status_${id}` }
-                          >
-                            Em andamento
-                          </p>
-                        )
-                        : (
-                          <p
-                            className="game-status finished-game"
-                            data-testid={ `matches__match_status_${id}` }
-                          >
-                            Finalizado
-                          </p>
-                        )
-                    }
-                  </div>
-                  {
-                    (isAdm)
-                      ? (
-                        <button
-                          type="button"
-                          data-testid={ `matches__match_status_btn_${id}` }
-                          disabled={ !inProgress }
-                          onClick={ () => {
-                            navigate(
-                              '/matches/settings',
-                              { state: {
-                                id,
-                                homeTeam,
-                                homeTeamGoals,
-                                awayTeam,
-                                awayTeamGoals,
-                                inProgress,
-                              } },
-                            );
-                            localStorage.setItem('game', 'editar');
-                          } }
-                        >
-                          {
-                            (inProgress)
-                              ? <img src={ editIcon } alt="Jogo em andamento" />
-                              : <img src={ check } alt="Jogo finalizado" />
-                          }
-                        </button>
-                      )
-                      : null
-                  }
-                </td>
-              </tr>
-            ))
-        }
+        {games.sort((a, b) => b.inProgress - a.inProgress).map((game) => (
+          <GameRow key={game.id} game={game} isAdm={isAdm} onNavigate={handleNavigate} />
+        ))}
       </tbody>
     </table>
   );

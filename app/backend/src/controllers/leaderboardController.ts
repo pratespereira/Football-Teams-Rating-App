@@ -19,14 +19,12 @@ export default class LeaderboardController {
   static async getAwayLeaderboard(req: Request, res: Response) {
     const leaderboard = await LeaderboardService.awayLeaderboard();
     const final = getFinalScore(leaderboard);
-    console.log(final);
     res.status(200).json(final);
   }
 
   static async getOverallLeaderboard(req: Request, res: Response) {
     const leaderboard = await LeaderboardService.getLeaderboard();
     const final = getFinalScore(leaderboard);
-    console.log(final);
     res.status(200).json(final);
   }
 }

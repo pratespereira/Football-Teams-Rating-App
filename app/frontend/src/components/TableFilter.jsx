@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/pages/games.css';
 
 const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
+  // Usando estado local para o valor do filtro
+  const [filter, setFilter] = useState(currentFilter);
+
   const handleCurrentFilter = () => {
-    const selectedFilter = document.getElementById('classification-filter').value;
-    setCurrentFilter(selectedFilter);
+    setCurrentFilter(filter);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
   };
 
   return (
@@ -14,7 +20,8 @@ const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
         Partidas:
         <select
           id="classification-filter"
-          defaultValue={ currentFilter }
+          value={filter}
+          onChange={handleFilterChange}
           data-testid="score_boarding__classification_filter"
         >
           <option>Classificação Geral</option>
@@ -25,7 +32,7 @@ const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
       <button
         data-testid="score_boarding__classification_filter_button"
         type="button"
-        onClick={ () => handleCurrentFilter() }
+        onClick={handleCurrentFilter}
       >
         Buscar
       </button>
@@ -33,9 +40,10 @@ const GamerFilter = ({ currentFilter, setCurrentFilter }) => {
   );
 };
 
-GamerFilter.propTypes = ({
-  currentFilter: PropTypes.string,
-  setCurrentFilter: PropTypes.func,
-}).isRequired;
+GamerFilter.propTypes = {
+  currentFilter: PropTypes.string.isRequired,
+  setCurrentFilter: PropTypes.func.isRequired,
+};
 
 export default GamerFilter;
+
